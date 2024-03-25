@@ -493,6 +493,12 @@ const Chat = () => {
     }
 
     const clearChat = async () => {
+        // Confirmation dialog
+        const confirmClear = window.confirm("Are you sure you want to clear the chat history? This action cannot be undone.");
+        if (!confirmClear) {
+            return; // Stop the function if user cancels
+        }
+
         setClearingChat(true)
         if (appStateContext?.state.currentChat?.id && appStateContext?.state.isCosmosDBAvailable.cosmosDB) {
             let response = await historyClear(appStateContext?.state.currentChat.id)
