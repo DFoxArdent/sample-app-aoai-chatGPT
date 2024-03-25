@@ -1,7 +1,16 @@
-* {
+@font-face {
+    font-family: 'Alaska';
+    src: url('assets/Alaska-VF.ttf') format('truetype');
+}
+
+/* Reset default styling and use border-box sizing for all elements */
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
+/* Base styles for the html and body */
 html,
 body {
     height: 100%;
@@ -9,13 +18,15 @@ body {
     padding: 0;
 }
 
+/* Set a background color and font settings for the entire page */
 html {
     background: #f2f2f2;
-    font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+    font-family: 'Alaska', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Ensure that the root div takes up the full height of the page */
 #root {
     height: 100%;
 }
