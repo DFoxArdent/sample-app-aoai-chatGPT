@@ -18,6 +18,7 @@ const Layout = () => {
     const appStateContext = useContext(AppStateContext)
     const ui = appStateContext?.state.frontendSettings?.ui;
 
+
     const handleShareClick = () => {
         setIsSharePanelOpen(true);
     };
@@ -69,11 +70,15 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <Stack horizontal verticalAlign="center" horizontalAlign="space-between">
                     <Stack horizontal verticalAlign="center">
-                        <img
-                            src={ui?.logo ? ui.logo : Contoso}
-                            className={styles.headerIcon}
-                            aria-hidden="true"
-                        />
+                        <a href="https://ardentatlas.azurewebsites.net/Projects/ApplicationSection" title="Go to Ardent Atlas Projects">
+                            <img
+                                src={ui?.logo ? ui.logo : Contoso}
+                                className={styles.headerIcon}
+                                aria-hidden="true"
+                                title="Click here to return to Atlas"
+                                alt="Ardent AI Logo"
+                            />
+                        </a>
                         <Link to="/" className={styles.headerTitleContainer}>
                             <h1 className={styles.headerTitle}>{ui?.title}</h1>
                         </Link>
