@@ -1,4 +1,4 @@
-.layout {
+﻿.layout {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -100,6 +100,7 @@
     color: #242424;
 }
 
+
 @media (max-width: 480px) {
     .headerTitleContainer {
         margin-left: 4px;
@@ -109,3 +110,4 @@
         margin-left: 26px;
     }
 }
+

@@ -295,7 +295,7 @@ export const Answer = ({
                     
                     {!showReportInappropriateFeedback ? <UnhelpfulFeedbackContent/> : <ReportInappropriateFeedbackContent/>}
                     
-                    <div>By pressing submit, your feedback will be visible to the application owner.</div>
+                    <div>By pressing submit, your feedback will be visible to the Digital Solutions team.</div>
                     
                     <DefaultButton disabled={negativeFeedbackList.length < 1} onClick={onSubmitNegativeFeedback}>Submit</DefaultButton>
                 </Stack>

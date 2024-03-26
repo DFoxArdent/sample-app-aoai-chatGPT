@@ -5,8 +5,11 @@
     "\\frontend\\public",
     "\\frontend\\src",
     "\\frontend\\src\\components",
-    "\\frontend\\src\\components\\Answer"
+    "\\frontend\\src\\components\\QuestionInput",
+    "\\frontend\\src\\pages",
+    "\\frontend\\src\\pages\\chat",
+    "\\frontend\\src\\pages\\layout"
   ],
-  "SelectedNode": "\\frontend\\src\\components\\Answer\\Answer.module.css",
+  "SelectedNode": "\\frontend\\src\\pages\\chat\\Chat.tsx",
   "PreviewInSolutionExplorer": false
 }
