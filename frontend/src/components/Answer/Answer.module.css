@@ -50,7 +50,6 @@
     font-weight: 400;
     font-size: 12px;
     line-height: 16px;
-
     display: flex;
     align-items: center;
     text-align: center;
@@ -66,7 +65,6 @@
     font-weight: 600;
     font-size: 12px;
     line-height: 16px;
-
     color: #115EA3;
     display: flex;
     flex-direction: row;
@@ -77,10 +75,10 @@
     border-radius: 4px;
 }
 
-.citationContainer:hover {
-    text-decoration: underline;
-    cursor: pointer;
-}
+    .citationContainer:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
 
 .citation {
     box-sizing: border-box;
@@ -105,10 +103,10 @@
     cursor: pointer;
 }
 
-.citation:hover {
-    text-decoration: underline;
-    cursor: pointer;
-}
+    .citation:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
 
 .accordionIcon {
     display: inline-flex;
@@ -121,9 +119,9 @@
     font-size: 10px;
 }
 
-.accordionIcon:hover {
-    cursor:pointer;
-}
+    .accordionIcon:hover {
+        cursor: pointer;
+    }
 
 .accordionTitle {
     margin-right: 5px;
@@ -137,9 +135,9 @@
     color: #616161;
 }
 
-.accordionTitle:hover {
-    cursor:pointer;
-}
+    .accordionTitle:hover {
+        cursor: pointer;
+    }
 
 .clickableSup {
     box-sizing: border-box;
@@ -165,10 +163,10 @@
     cursor: pointer;
 }
 
-.clickableSup:hover {
-    text-decoration: underline;
-    cursor: pointer;
-}
+    .clickableSup:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
 
 sup {
     font-size: 10px;

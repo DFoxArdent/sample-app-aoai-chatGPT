@@ -325,10 +325,10 @@
     color: #424242;
 }
 
-.citationPanelDismiss:hover {
-    background-color: #D1D1D1;
-    cursor: pointer;
-}
+    .citationPanelDismiss:hover {
+        background-color: #D1D1D1;
+        cursor: pointer;
+    }
 
 .citationPanelTitle {
     font-style: normal;
@@ -338,12 +338,12 @@
     color: #323130;
     margin-top: 12px;
     margin-bottom: 12px;
-} 
-
-.citationPanelTitle:hover {
-    text-decoration: underline;
-    cursor: pointer;
 }
+
+    .citationPanelTitle:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
 
 .citationPanelContent {
     font-style: normal;
@@ -355,7 +355,7 @@
     order: 1;
     align-self: stretch;
     flex-grow: 0;
-} 
+}
 
 a {
     padding-left: 5px;
@@ -376,10 +376,10 @@ a {
     border-radius: 4px;
 }
 
-.viewSourceButton:hover {
-    text-decoration: underline;
-    cursor: pointer;
-}
+    .viewSourceButton:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
 
 @media (max-width: 480px) {
     .chatInput {
