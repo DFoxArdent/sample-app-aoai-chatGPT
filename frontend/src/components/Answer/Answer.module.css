@@ -77,6 +77,14 @@
     border-radius: 4px;
 }
 
+.citationWrapper {
+    margin-top: 8;
+    display: flex;
+    flex-flow: wrap column;
+    max-height: 150px;
+    gap: 4px;
+}
+
 .citationContainer:hover {
     text-decoration: underline;
     cursor: pointer;
@@ -174,3 +182,23 @@ sup {
     font-size: 10px;
     line-height: 10px;
 }
+
+}
+
+@media (max-width: 480px) {
+    .answerFooter {
+        flex-direction: column-reverse;
+    }
+
+    .citationWrapper {
+        max-height: max-content;
+    }
+
+    .citationContainer {
+        margin-left: 0;
+    }
+
+    .answerDisclaimer {
+        margin-bottom: 5px;
+    }
+}	}
