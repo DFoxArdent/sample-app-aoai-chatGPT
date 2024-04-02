@@ -73,6 +73,7 @@ const Chat = () => {
     }
 
     const [ASSISTANT, TOOL, ERROR] = ["assistant", "tool", "error"]
+    const NO_CONTENT_ERROR = "No content in messages object."
 
     useEffect(() => {
         if (appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.Working  
@@ -356,6 +357,10 @@ const Chat = () => {
                             if (obj !== "" && obj !== "{}") {
                                 runningText += obj;
                                 result = JSON.parse(runningText);
+                                if (!result.choices?.[0]?.messages?.[0].content) {
+                                    errorResponseMessage = NO_CONTENT_ERROR;
+                                    throw Error();
+                                }
                                 if (result.choices?.length > 0) {
                                     result.choices[0].messages.forEach((msg) => {
                                         msg.id = result.id;
@@ -554,11 +559,15 @@ const Chat = () => {
                     console.error("Failure fetching current chat state.")
                     return
                 }
-                saveToDB(appStateContext.state.currentChat.messages, appStateContext.state.currentChat.id)
-                    .then((res) => {
-                        if (!res.ok) {
-                            let errorMessage = "An error occurred. Answers can't be saved at this time. If the problem persists, please contact the Digital Solutions team.";
-                            let errorChatMsg: ChatMessage = {
+                const noContentError = appStateContext.state.currentChat.messages.find(m => m.role === ERROR)
+                
+                if (noContentError && !noContentError.content.includes(NO_CONTENT_ERROR)) {
+                    saveToDB(appStateContext.state.currentChat.messages, appStateContext.state.currentChat.id)
+
+                        .then((res)=> {
+                            if (!res.ok) {
+                                let errorMessage = "An error occurred. Answers can't be saved at this time. If the problem persists, please contact the Digital Solutions team.";
+                                let errorChatMsg: ChatMessage = {
                                 id: uuid(),
                                 role: ERROR,
                                 content: errorMessage,
@@ -584,6 +593,8 @@ const Chat = () => {
                         }
                         return errRes;
                     })
+                }
+                
             } else {
             }
             appStateContext?.dispatch({ type: 'UPDATE_CHAT_HISTORY', payload: appStateContext.state.currentChat });
