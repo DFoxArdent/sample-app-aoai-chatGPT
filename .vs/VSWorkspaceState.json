@@ -1,15 +1,16 @@
 {
   "ExpandedNodes": [
     "",
+    "\\backend",
     "\\frontend",
-    "\\frontend\\public",
     "\\frontend\\src",
     "\\frontend\\src\\components",
+    "\\frontend\\src\\components\\Answer",
     "\\frontend\\src\\components\\QuestionInput",
     "\\frontend\\src\\pages",
     "\\frontend\\src\\pages\\chat",
     "\\frontend\\src\\pages\\layout"
   ],
-  "SelectedNode": "\\frontend\\src\\pages\\layout\\Layout.module.css",
+  "SelectedNode": "\\backend\\utils.py",
   "PreviewInSolutionExplorer": false
 }
