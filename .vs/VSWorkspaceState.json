@@ -11,6 +11,6 @@
     "\\frontend\\src\\pages\\chat",
     "\\frontend\\src\\pages\\layout"
   ],
-  "SelectedNode": "\\backend\\utils.py",
+  "SelectedNode": "\\frontend\\vite.config.ts",
   "PreviewInSolutionExplorer": false
 }
