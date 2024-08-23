@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\.github",
+    "\\.github\\workflows",
+    "\\frontend",
+    "\\frontend\\src",
+    "\\frontend\\src\\components",
+    "\\frontend\\src\\components\\QuestionInput",
+    "\\frontend\\src\\pages",
+    "\\frontend\\src\\pages\\chat",
+    "\\frontend\\src\\pages\\layout"
+  ],
+  "SelectedNode": "\\frontend\\src\\pages\\chat\\Chat.tsx",
+  "PreviewInSolutionExplorer": false
+}

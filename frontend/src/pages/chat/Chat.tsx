@@ -12,7 +12,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { nord } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 import styles from './Chat.module.css'
-import Contoso from '../../assets/Contoso.svg'
+import Contoso from "../../assets/Ardent A.svg"
 import { XSSAllowTags } from '../../constants/sanatizeAllowables'
 
 import {
@@ -89,7 +89,7 @@ const Chat = () => {
       appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Fail &&
       hideErrorDialog
     ) {
-      let subtitle = `${appStateContext.state.isCosmosDBAvailable.status}. Please contact the site administrator.`
+      let subtitle = `${appStateContext.state.isCosmosDBAvailable.status}. Please contact the Digital Solutions team.`
       setErrorMsg({
         title: 'Chat history is not enabled',
         subtitle: subtitle
@@ -259,7 +259,7 @@ const Chat = () => {
     } catch (e) {
       if (!abortController.signal.aborted) {
         let errorMessage =
-          'An error occurred. Please try again. If the problem persists, please contact the site administrator.'
+          'An error occurred. Please try again. If the problem persists, please contact the Digital Solutions team.'
         if (result.error?.message) {
           errorMessage = result.error.message
         } else if (typeof result.error === 'string') {
@@ -327,7 +327,7 @@ const Chat = () => {
       setMessages(request.messages)
     }
     let result = {} as ChatResponse
-    var errorResponseMessage = 'Please try again. If the problem persists, please contact the site administrator.'
+    var errorResponseMessage = 'Please try again. If the problem persists, please contact the Digital Solutions team.'
     try {
       const response = conversationId
         ? await historyGenerate(request, abortController.signal, conversationId)
@@ -518,13 +518,19 @@ const Chat = () => {
   }
 
   const clearChat = async () => {
+
+      const confirmClear = window.confirm("Are you sure you want to clear the chat history? This action cannot be undone.");
+      if (!confirmClear) {
+          return;
+      }
+
     setClearingChat(true)
     if (appStateContext?.state.currentChat?.id && appStateContext?.state.isCosmosDBAvailable.cosmosDB) {
       let response = await historyClear(appStateContext?.state.currentChat.id)
       if (!response.ok) {
         setErrorMsg({
           title: 'Error clearing current chat',
-          subtitle: 'Please try again. If the problem persists, please contact the site administrator.'
+          subtitle: 'Please try again. If the problem persists, please contact the Digital Solutions team.'
         })
         toggleErrorDialog()
       } else {
@@ -640,7 +646,7 @@ const Chat = () => {
             .then(res => {
               if (!res.ok) {
                 let errorMessage =
-                  "An error occurred. Answers can't be saved at this time. If the problem persists, please contact the site administrator."
+                  "An error occurred. Answers can't be saved at this time. If the problem persists, please contact the Digital Solutions team."
                 let errorChatMsg: ChatMessage = {
                   id: uuid(),
                   role: ERROR,
@@ -860,7 +866,7 @@ const Chat = () => {
                       root: {
                         color: '#FFFFFF',
                         background:
-                          'radial-gradient(109.81% 107.82% at 100.1% 90.19%, #0F6CBD 33.63%, #2D87C3 70.31%, #8DDDD8 100%)'
+                            "radial-gradient(circle, #87F5D3 1%, #00DA96 60%)"
                       },
                       rootDisabled: {
                         background: '#F0F0F0'
@@ -885,7 +891,7 @@ const Chat = () => {
                     root: {
                       color: '#FFFFFF',
                       background:
-                        'radial-gradient(109.81% 107.82% at 100.1% 90.19%, #0F6CBD 33.63%, #2D87C3 70.31%, #8DDDD8 100%)'
+                        'radial-gradient(circle, #87F5D3 1%, #00DA96 60%)'
                     },
                     rootDisabled: {
                       background: '#F0F0F0'

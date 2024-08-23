@@ -16,17 +16,16 @@
 }
 
 .chatContainer {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: radial-gradient(108.78% 108.78% at 50.02% 19.78%, #ffffff 57.29%, #eef6fe 100%);
-  box-shadow:
-    0px 2px 4px rgba(0, 0, 0, 0.14),
-    0px 0px 2px rgba(0, 0, 0, 0.12);
-  border-radius: 8px;
-  overflow-y: auto;
-  max-height: calc(100vh - 100px);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url('../../assets/Ardent Background.png') no-repeat center center;
+    background-size: cover; 
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    overflow-y: auto;
+    max-height: calc(100vh - 100px);
 }
 
 .chatEmptyState {
@@ -62,7 +61,7 @@
 }
 
 .chatIcon {
-  height: 62px;
+  height: 200px;
   width: auto;
 }
 
@@ -85,23 +84,35 @@
 }
 
 .chatMessageUserMessage {
-  display: flex;
-  padding: 20px;
-  background: #edf5fd;
-  border-radius: 8px;
-  box-shadow:
-    0px 2px 4px rgba(0, 0, 0, 0.14),
-    0px 0px 2px rgba(0, 0, 0, 0.12);
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 22px;
-  color: #242424;
-  order: 0;
-  flex-grow: 0;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  max-width: 80%;
+    display: flex;
+    padding: 20px;
+    background: #EDF5FD;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: #242424;
+    order: 0;
+    flex-grow: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 80%;
+    border: 1px solid #031C31;
+}
+
+.chatMessageGpt::before {
+    content: ''; /* Necessary for the pseudo-element to work */
+    display: inline-block;
+    width: 20px; /* Adjust based on your icon's size */
+    height: 20px; /* Adjust based on your icon's size */
+    background-image: url('../../assets/Ardent A.svg'); /* Path to your icon */
+    background-size: contain; /* Ensure the icon fits within the dimensions */
+    background-repeat: no-repeat;
+    margin-right: 10px; /* Adjust the spacing between the icon and the message */
+    /* Optionally adjust vertical alignment if needed */
+    align-self: center;
 }
 
 .chatMessageGpt {
@@ -150,52 +161,100 @@
 }
 
 .clearChatBroom {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  left: 7px;
-  top: 13px;
-  color: #ffffff;
-  border-radius: 4px;
-  z-index: 1;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    left: 7px;
+    top: 13px;
+    color: #153754;
+    border: 1px solid #031C31;
+    border-radius: 4px;
+    z-index: 1;
 }
+
+    .clearChatBroom:hover::after {
+        content: "Click here to clear the chat"; /* Replace 'Tooltip Text' with your desired text */
+        position: absolute;
+        bottom: -30px; /* Adjust this value for vertical positioning */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff;
+        color: #000;
+        padding: 5px 10px;
+        border-radius: 4px;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        white-space: nowrap;
+        z-index: 2;
+    }
 
 .clearChatBroomNoCosmos {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  left: 7px;
-  top: 66px;
-  color: #ffffff;
-  border-radius: 4px;
-  z-index: 1;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    left: 7px;
+    top: 66px;
+    color: #153754;
+    border: 1px solid #031C31;
+    border-radius: 4px;
+    z-index: 1;
 }
 
+    .clearChatBroomNoCosmos:hover::after {
+        content: "Click here to clear the chat"; /* Replace 'Tooltip Text' with your desired text */
+        position: absolute;
+        bottom: -30px; /* Adjust this value for vertical positioning */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff;
+        color: #000;
+        padding: 5px 10px;
+        border-radius: 4px;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        white-space: nowrap;
+        z-index: 2;
+    }
+
 .newChatIcon {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  left: 7px;
-  top: 66px;
-  color: #ffffff;
-  border-radius: 4px;
-  z-index: 1;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    left: 7px;
+    top: 66px;
+    color: #00DA96;
+    border: 1px solid #031C31;
+    border-radius: 4px;
+    z-index: 1;
 }
+
+    .newChatIcon:hover::after {
+        content: "Click here to start a new chat"; /* Replace 'Tooltip Text' with your desired text */
+        position: absolute;
+        bottom: -30px; /* Adjust this value for vertical positioning */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff;
+        color: #000;
+        padding: 5px 10px;
+        border-radius: 4px;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        white-space: nowrap;
+        z-index: 2;
+    }
 
 .stopGeneratingContainer {
   box-sizing: border-box;
@@ -210,7 +269,7 @@
   height: 32px;
   left: calc(50% - 161px / 2 + 25.8px);
   bottom: 116px;
-  border: 1px solid #d1d1d1;
+  border: 1px solid #00DA96;
   border-radius: 16px;
 }
 
