@@ -4,7 +4,7 @@ import { Dialog, Stack, TextField } from '@fluentui/react'
 import { CopyRegular } from '@fluentui/react-icons'
 
 import { CosmosDBStatus } from '../../api'
-import Contoso from '../../assets/Contoso.svg'
+import Contoso from '../../assets/Atlas AI Icon.svg'
 import { HistoryButton, ShareButton } from '../../components/common/Button'
 import { AppStateContext } from '../../state/AppProvider'
 
@@ -74,13 +74,20 @@ const Layout = () => {
   }, [])
 
   return (
-    <div className={styles.layout}>
-      <header className={styles.header} role={'banner'}>
-        <Stack horizontal verticalAlign="center" horizontalAlign="space-between">
-          <Stack horizontal verticalAlign="center">
-            <img src={logo} className={styles.headerIcon} aria-hidden="true" alt="" />
+      <div className={styles.layout}>
+          <header className={styles.header} role={"banner"}>
+              <Stack horizontal verticalAlign="center" horizontalAlign="space-between">
+                  <Stack horizontal verticalAlign="center">
+                      <a href="https://ardentatlas.azurewebsites.net/Projects/ApplicationSection" title="Go to Ardent Atlas Projects">
+                          <img
+                              src={ui?.logo ? ui.logo : Contoso}
+                              className={styles.headerIcon}
+                              aria-hidden="true"
+                              title="Click here to return to Atlas"
+                              alt="Ardent AI Logo"
+                          />
+                      </a>
             <Link to="/" className={styles.headerTitleContainer}>
-              <h1 className={styles.headerTitle}>{ui?.title}</h1>
             </Link>
           </Stack>
           <Stack horizontal tokens={{ childrenGap: 4 }} className={styles.shareButtonContainer}>

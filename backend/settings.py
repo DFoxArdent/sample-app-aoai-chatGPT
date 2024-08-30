@@ -45,8 +45,8 @@ class _UiSettings(BaseSettings):
     logo: Optional[str] = None
     chat_logo: Optional[str] = None
     chat_title: str = "Start chatting"
-    chat_description: str = "This chatbot is configured to answer your questions"
-    favicon: str = "/favicon.ico"
+    chat_description: str = "This chatbot is configured with additional knowledge about Ardent Management"
+    favicon: str = "/Atlas.ico"
     show_share_button: bool = True
     show_chat_history_button: bool = True
 
@@ -105,9 +105,9 @@ class _AzureOpenAISettings(BaseSettings):
     key: Optional[str] = None
     resource: Optional[str] = None
     endpoint: Optional[str] = None
-    temperature: float = 0
-    top_p: float = 0
-    max_tokens: int = 1000
+    temperature: float = 0.3
+    top_p: float = 0.7
+    max_tokens: int = 4000
     stream: bool = True
     stop_sequence: Optional[List[str]] = None
     seed: Optional[int] = None

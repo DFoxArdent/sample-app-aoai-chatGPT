@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\venv",
+    "\\venv\\Lib",
+    "\\venv\\Lib\\site-packages",
+    "\\venv\\Lib\\site-packages\\pip\\_vendor",
+    "\\venv\\Lib\\site-packages\\pip\\_vendor\\platformdirs",
+    "\\venv\\Lib\\site-packages\\win32",
+    "\\venv\\Lib\\site-packages\\win32comext",
+    "\\venv\\Lib\\site-packages\\win32comext\\shell",
+    "\\venv\\Lib\\site-packages\\win32\\lib"
+  ],
+  "SelectedNode": "\\venv\\Lib\\site-packages\\win32\\lib\\win32con.py",
+  "PreviewInSolutionExplorer": false
+}
