@@ -56,7 +56,7 @@ export function ChatHistoryPanel(_props: ChatHistoryPanelProps) {
     closeButtonAriaLabel: 'Close',
     subText: !clearingError
       ? 'All chat history will be permanently removed.'
-      : 'Please try again. If the problem persists, please contact the site administrator.'
+      : 'Please try again. If the problem persists, Please contact the Digital Solutions team.'
   }
 
   const modalProps = {

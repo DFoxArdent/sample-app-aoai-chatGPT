@@ -46,7 +46,7 @@
   height: 4px;
   left: 0%;
   bottom: 0%;
-  background: radial-gradient(106.04% 106.06% at 100.1% 90.19%, #0f6cbd 33.63%, #8dddd8 100%);
+  background: radial-gradient(106.04% 106.06% at 100.1% 90.19%, #00DA96 33.63%, #bef3e2 100%);
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 }
@@ -64,33 +64,35 @@
 }
 
 .fileInputContainer {
-  position: absolute;
-  right: 24px;
-  top: 20px;
+    position: absolute;
+    right: 24px;
+    top: 20px;
 }
 
 .fileInput {
-  width: 0;
-  height: 0;
-  opacity: 0;
-  overflow: hidden;
-  position: absolute;
-  z-index: -1;
+    width: 0; /* Hidden input for accessibility purposes */
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
 }
 
 .fileLabel {
-  display: inline-block;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
-  font-size: 14px;
+    display: inline-block;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
 }
 
 .fileIcon {
-  font-size: 20px;
-  color: #424242;
+    font-size: 20px; /* Adjust icon size as needed */
+    color: #424242; /* Adjust color as needed */
+    visibility: visible; /* Make sure it's visible */
+    display: inline; /* Ensure it's inline or block, depending on layout needs */
 }
 
 .uploadedImage {
-  margin-right: 70px;
+    margin-right: 70px;
 }
