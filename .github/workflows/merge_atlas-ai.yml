@@ -66,4 +66,4 @@ jobs:
         with:
           app-name: 'Atlas-AI'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_614FADC243404D0FBF29EA680AC9F799 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CA34C2775FA648CABD507262B83D845F }}
