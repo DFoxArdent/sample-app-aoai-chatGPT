@@ -208,6 +208,7 @@ class _SearchCommonSettings(BaseSettings):
     allow_partial_result: bool = False
     include_contexts: Optional[List[str]] = ["citations", "intent"]
     vectorization_dimensions: Optional[int] = None
+    query_type: Literal["simple", "semantic", "vector", "vectorSemanticHybrid"] = "simple"
     role_information: str = Field(
         default="You are an AI assistant that helps people find information.",
         validation_alias="AZURE_OPENAI_SYSTEM_MESSAGE"
@@ -220,6 +221,8 @@ class _SearchCommonSettings(BaseSettings):
             return parse_multi_columns(comma_separated_string)
         
         return cls.model_fields[info.field_name].get_default()
+
+
 
 
 class DatasourcePayloadConstructor(BaseModel, ABC):
@@ -265,9 +268,7 @@ class _AzureSearchSettings(BaseSettings, DatasourcePayloadConstructor):
         'vector',
         'semantic',
         'vector_simple_hybrid',
-        'vectorSimpleHybrid',
-        'vector_semantic_hybrid',
-        'vectorSemanticHybrid'
+        'vector_semantic_hybrid'
     ] = "simple"
     permitted_groups_column: Optional[str] = Field(default=None, exclude=True)
     
@@ -752,10 +753,15 @@ class _BaseSettings(BaseSettings):
         arbitrary_types_allowed=True,
         env_ignore_empty=True
     )
+
     datasource_type: Optional[str] = None
     auth_enabled: bool = True
     sanitize_answer: bool = False
     use_promptflow: bool = False
+    use_custom_environment: bool = Field(
+        default=False,
+        env="USE_CUSTOM_ENVIRONMENT"
+    )  # Added new toggle
 
 
 class _AppSettings(BaseModel):
@@ -770,13 +776,33 @@ class _AppSettings(BaseModel):
     promptflow: Optional[_PromptflowSettings] = None
 
     @model_validator(mode="after")
-    def set_promptflow_settings(self) -> Self:
+    def adjust_for_environment_mode(self):
+        """
+        Adjust settings dynamically based on `use_custom_environment` toggle.
+        """
+        if self.base_settings.use_custom_environment:
+            self.azure_openai.key = None
+            self.azure_openai.resource = None
+            self.search.allow_partial_result = False
+            self.search.query_type = "semantic"
+            logging.debug("Custom environment settings applied")
+        else:
+            self.azure_openai.key = os.getenv("AZURE_OPENAI_KEY", "")
+            self.azure_openai.resource = os.getenv("AZURE_OPENAI_RESOURCE", "")
+            self.search.query_type = os.getenv("AZURE_SEARCH_QUERY_TYPE", "vectorSemanticHybrid")
+            logging.debug("Default environment settings restored")
+        return self  # Ensure self is returned
+
+
+    @model_validator(mode="after")
+    def set_promptflow_settings(self):
+        """
+        Set PromptFlow settings dynamically.
+        """
         try:
             self.promptflow = _PromptflowSettings()
-            
         except ValidationError:
             self.promptflow = None
-            
         return self
     
     @model_validator(mode="after")
@@ -831,4 +857,10 @@ class _AppSettings(BaseModel):
             logging.warning(e.errors())
 
 
-app_settings = _AppSettings()
+try:
+    app_settings = _AppSettings()
+    print("App settings loaded successfully:", app_settings)
+except ValidationError as e:
+    logging.error("Error during app_settings initialization:", exc_info=True)
+    raise
+

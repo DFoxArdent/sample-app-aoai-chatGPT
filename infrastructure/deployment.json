@@ -2,11 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "HostingPlanName": {
-            "type": "string",
-            "defaultValue": "[guid(resourceGroup().id)]",
+        "UseCustomEnvironment": {
+            "type": "bool",
+            "defaultValue": false,
             "metadata": {
-                "description": "Name of App Service plan"
+                "description": "Enable or disable custom environment settings"
             }
         },
         "HostingPlanSku": {
@@ -394,7 +394,7 @@
                         },
                         {
                             "name": "AZURE_SEARCH_SERVICE",
-                            "value": "[parameters('AzureSearchService')]"
+                            "value": "[if(parameters('UseCustomEnvironment'), '', parameters('AzureSearchService'))]"
                         },
                         {
                             "name": "AZURE_SEARCH_INDEX",
@@ -402,11 +402,11 @@
                         },
                         {
                             "name": "AZURE_SEARCH_KEY",
-                            "value": "[parameters('AzureSearchKey')]"
+                            "value": "[if(parameters('UseCustomEnvironment'), '', parameters('AzureSearchKey'))]"
                         },
                         {
                             "name": "AZURE_SEARCH_USE_SEMANTIC_SEARCH",
-                            "value": "[parameters('AzureSearchUseSemanticSearch')]"
+                            "value": "[if(parameters('UseCustomEnvironment'), 'false', parameters('AzureSearchUseSemanticSearch'))]"
                         },
                         {
                             "name": "AZURE_SEARCH_SEMANTIC_SEARCH_CONFIG",
@@ -422,7 +422,7 @@
                         },
                         {
                             "name": "AZURE_SEARCH_ENABLE_IN_DOMAIN",
-                            "value": "[parameters('AzureSearchEnableInDomain')]"
+                            "value": "[if(parameters('UseCustomEnvironment'), 'true', parameters('AzureSearchEnableInDomain'))]"
                         },
                         {
                             "name": "AZURE_SEARCH_CONTENT_COLUMNS",
@@ -498,7 +498,7 @@
                         },
                         {
                             "name": "AZURE_OPENAI_EMBEDDING_NAME",
-                            "value": "[parameters('AzureOpenAIEmbeddingName')]"
+                            "value": "[if(parameters('UseCustomEnvironment'), '', parameters('AzureOpenAIEmbeddingName'))]"
                         },
                         {
                             "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",

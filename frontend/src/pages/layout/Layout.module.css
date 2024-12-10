@@ -9,9 +9,10 @@
 }
 
 .headerContainer {
-  display: flex;
-  justify-content: left;
-  align-items: center;
+    display: flex;
+    justify-content: space-between; /* Ensures proper alignment of elements */
+    align-items: center;
+    padding: 0 20px; /* Adds padding for spacing */
 }
 
 .headerTitleContainer {
@@ -38,10 +39,10 @@
 }
 
 .shareButtonContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-right: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end; /* Aligns buttons to the right */
+    gap: 10px; /* Adds space between buttons */
 }
 
 .shareButton {
@@ -98,6 +99,12 @@
   display: flex;
   align-items: center;
   color: #242424;
+}
+
+.toggleContainer {
+    flex: 1; /* Makes the toggle take up space in the middle */
+    display: flex;
+    justify-content: center; /* Centers the toggle */
 }
 
 @media (max-width: 480px) {

@@ -40,6 +40,46 @@ bp = Blueprint("routes", __name__, static_folder="static", template_folder="stat
 
 cosmos_db_ready = asyncio.Event()
 
+@bp.route("/api/get-env-mode", methods=["GET"])
+async def get_env_mode():
+    try:
+        # Return the current environment mode (default or custom)
+        return jsonify({"isCustomMode": app_settings.base_settings.use_custom_environment}), 200
+    except Exception as e:
+        logging.exception("Exception in /api/get-env-mode")
+        return jsonify({"error": str(e)}), 500
+
+
+@bp.route("/api/set-env-mode", methods=["POST"])
+async def set_env_mode():
+    try:
+        request_json = await request.get_json()
+        is_custom_mode = request_json.get("isCustomMode", False)
+
+        # Update backend settings based on the toggle value
+        app_settings.base_settings.use_custom_environment = is_custom_mode
+
+        # Adjust dependent settings
+        if is_custom_mode:
+            app_settings.azure_openai.key = ""
+            app_settings.azure_openai.resource = ""
+            app_settings.azure_openai.embedding_name = ""
+            app_settings.datasource.use_semantic_search = False
+            app_settings.datasource.enable_in_domain = False
+            app_settings.datasource.enable_in_domain = False
+        else:
+            # Reset to original values if needed
+            app_settings.azure_openai.key = os.environ.get("AZURE_SEARCH_KEY", "")
+            app_settings.azure_openai.resource = os.environ.get("AZURE_SEARCH_SERVICE", "")
+            app_settings.azure_openai.embedding_name = os.environ.get("AZURE_OPENAI_EMBEDDING_NAME", "")
+            app_settings.datasource.use_semantic_search = os.environ.get("AZURE_SEARCH_USE_SEMANTIC_SEARCH", "true").lower() == "true"
+            app_settings.datasource.enable_in_domain = os.environ.get("AZURE_SEARCH_ENABLE_IN_DOMAIN", "true").lower() == "true"
+
+        return jsonify({"message": "Environment mode updated successfully"}), 200
+    except Exception as e:
+        logging.exception("Exception in /api/set-env-mode")
+        return jsonify({"error": str(e)}), 500
+
 
 def create_app():
     app = Quart(__name__)
