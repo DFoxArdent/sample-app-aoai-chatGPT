@@ -1,14 +1,14 @@
-import { useContext, useEffect, useState } from 'react'
-import { Link, Outlet } from 'react-router-dom'
-import { Dialog, Stack, TextField } from '@fluentui/react'
-import { CopyRegular } from '@fluentui/react-icons'
+import { useContext, useEffect, useState } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import { Dialog, Stack, TextField } from '@fluentui/react';
+import { CopyRegular } from '@fluentui/react-icons';
 
-import { CosmosDBStatus } from '../../api'
-import Contoso from '../../assets/Atlas AI Icon.svg'
-import { HistoryButton, ShareButton } from '../../components/common/Button'
-import { AppStateContext } from '../../state/AppProvider'
+import { CosmosDBStatus } from '../../api';
+import Contoso from '../../assets/Atlas AI Icon.svg';
+import { HistoryButton, ShareButton, SwitchAIButton } from '../../components/common/Button';
+import { AppStateContext } from '../../state/AppProvider';
 
-import styles from './Layout.module.css'
+import styles from './Layout.module.css';
 
 const Layout = () => {
     const [isSharePanelOpen, setIsSharePanelOpen] = useState<boolean>(false);
@@ -17,9 +17,8 @@ const Layout = () => {
     const [shareLabel, setShareLabel] = useState<string | undefined>("Share");
     const [hideHistoryLabel, setHideHistoryLabel] = useState<string>("Hide chat history");
     const [showHistoryLabel, setShowHistoryLabel] = useState<string>("Show chat history");
-    const appStateContext = useContext(AppStateContext)
+    const appStateContext = useContext(AppStateContext);
     const ui = appStateContext?.state.frontendSettings?.ui;
-
 
     const handleShareClick = () => {
         setIsSharePanelOpen(true);
@@ -37,7 +36,7 @@ const Layout = () => {
     };
 
     const handleHistoryClick = () => {
-        appStateContext?.dispatch({ type: 'TOGGLE_CHAT_HISTORY' })
+        appStateContext?.dispatch({ type: 'TOGGLE_CHAT_HISTORY' });
     };
 
     useEffect(() => {
@@ -51,13 +50,13 @@ const Layout = () => {
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth < 480) {
-                setShareLabel(undefined)
-                setHideHistoryLabel("Hide history")
-                setShowHistoryLabel("Show history")
+                setShareLabel(undefined);
+                setHideHistoryLabel("Hide history");
+                setShowHistoryLabel("Show history");
             } else {
-                setShareLabel("Share")
-                setHideHistoryLabel("Hide chat history")
-                setShowHistoryLabel("Show chat history")
+                setShareLabel("Share");
+                setHideHistoryLabel("Hide chat history");
+                setShowHistoryLabel("Show chat history");
             }
         };
 
@@ -71,18 +70,17 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role={"banner"}>
                 <Stack horizontal verticalAlign="center" horizontalAlign="space-between">
-                    <Stack horizontal verticalAlign="center">
-                        <a href="https://ardentatlas.azurewebsites.net/Projects/ApplicationSection" title="Go to Ardent Atlas Projects">
-                            <img
-                                src={ui?.logo ? ui.logo : Contoso}
-                                className={styles.headerIcon}
-                                aria-hidden="true"
-                                title="Click here to return to Atlas"
-                                alt="Ardent AI Logo"
-                            />
-                        </a>
-                    </Stack>
+                    <a href="https://ardentatlas.azurewebsites.net/Projects/ApplicationSection" title="Go to Ardent Atlas Projects">
+                        <img
+                            src={ui?.logo ? ui.logo : Contoso}
+                            className={styles.headerIcon}
+                            aria-hidden="true"
+                            title="Click here to return to Atlas"
+                            alt="Ardent AI Logo"
+                        />
+                    </a>
                     <Stack horizontal tokens={{ childrenGap: 4 }} className={styles.shareButtonContainer}>
+                        <SwitchAIButton url="https://non-ardent-atlas-ai.example.com" />
                         {(appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured) &&
                             <HistoryButton onClick={handleHistoryClick} text={appStateContext?.state?.isChatHistoryOpen ? hideHistoryLabel : showHistoryLabel} />
                         }
@@ -95,7 +93,6 @@ const Layout = () => {
                 onDismiss={handleSharePanelDismiss}
                 hidden={!isSharePanelOpen}
                 styles={{
-
                     main: [{
                         selectors: {
                             ['@media (min-width: 480px)']: {
