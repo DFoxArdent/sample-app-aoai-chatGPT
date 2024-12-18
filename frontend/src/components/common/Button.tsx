@@ -34,9 +34,9 @@ export const SwitchAIButton: React.FC<{ url: string }> = ({ url }) => {
         <a
             href={url}
             className={styles.switchAIButtonRoot}
-            title="Switch to Non-Ardent Atlas AI"
+            title="Switch to Ardent Knowledge Base"
         >
-            Switch to Non-Ardent AI
+            Switch to Ardent Knowledge Base
         </a>
     );
 };
