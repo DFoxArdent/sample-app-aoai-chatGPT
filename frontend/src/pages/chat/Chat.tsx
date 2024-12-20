@@ -811,23 +811,50 @@ const Chat = () => {
                     {answer.role === 'user' ? (
                       <div className={styles.chatMessageUser} tabIndex={0}>
                         <div className={styles.chatMessageUserMessage}>
-                          {typeof answer.content === "string" && answer.content ? answer.content : Array.isArray(answer.content) ? <>{answer.content[0].text} <img className={styles.uploadedImageChat} src={answer.content[1].image_url.url} alt="Uploaded Preview" /></> : null}
+                          {typeof answer.content === 'string' && answer.content ? (
+                            answer.content
+                          ) : Array.isArray(answer.content) ? (
+                            <>
+                              {/* Find and display the text content */}
+                              {answer.content.find(
+                                (part): part is { type: 'text'; text: string } => part.type === 'text'
+                              )?.text}
+
+                              {/* Find and display the image content */}
+                              {answer.content.find(
+                                (part): part is { type: 'image_url'; image_url: { url: string } } => part.type === 'image_url'
+                              )?.image_url.url && (
+                                <img
+                                  className={styles.uploadedImageChat}
+                                  src={
+                                    answer.content.find(
+                                      (part): part is { type: 'image_url'; image_url: { url: string } } =>
+                                        part.type === 'image_url'
+                                    )?.image_url.url
+                                  }
+                                  alt="Uploaded"
+                                />
+                              )}
+                            </>
+                          ) : null}
                         </div>
                       </div>
                     ) : answer.role === 'assistant' ? (
                       <div className={styles.chatMessageGpt}>
-                        {typeof answer.content === "string" && <Answer
-                          answer={{
-                            answer: answer.content,
-                            citations: parseCitationFromMessage(messages[index - 1]),
-                            generated_chart: parsePlotFromMessage(messages[index - 1]),
-                            message_id: answer.id,
-                            feedback: answer.feedback,
-                            exec_results: execResults
-                          }}
-                          onCitationClicked={c => onShowCitation(c)}
-                          onExectResultClicked={() => onShowExecResult(answerId)}
-                        />}
+                        {typeof answer.content === 'string' && (
+                          <Answer
+                            answer={{
+                              answer: answer.content,
+                              citations: parseCitationFromMessage(messages[index - 1]),
+                              generated_chart: parsePlotFromMessage(messages[index - 1]),
+                              message_id: answer.id,
+                              feedback: answer.feedback,
+                              exec_results: execResults,
+                            }}
+                            onCitationClicked={c => onShowCitation(c)}
+                            onExectResultClicked={() => onShowExecResult(answerId)}
+                          />
+                        )}
                       </div>
                     ) : answer.role === ERROR ? (
                       <div className={styles.chatMessageError}>
@@ -835,7 +862,9 @@ const Chat = () => {
                           <ErrorCircleRegular className={styles.errorIcon} style={{ color: 'rgba(182, 52, 67, 1)' }} />
                           <span>Error</span>
                         </Stack>
-                        <span className={styles.chatMessageErrorContent}>{typeof answer.content === "string" && answer.content}</span>
+                        <span className={styles.chatMessageErrorContent}>
+                          {typeof answer.content === 'string' && answer.content}
+                        </span>
                       </div>
                     ) : null}
                   </>

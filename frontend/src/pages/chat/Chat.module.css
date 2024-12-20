@@ -411,12 +411,11 @@ a {
 }
 
 .uploadedImageChat {
-  position: absolute;
-  right: -23px;
-  bottom: -35px;
-  max-width: 70%;
-  max-height: 70%;
-  border-radius: 4px;
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 5px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
 }
 
 @media (max-width: 480px) {

@@ -106,7 +106,6 @@ frontend_settings = {
     "oyd_enabled": app_settings.base_settings.datasource_type,
 }
 
-
 # Enable Microsoft Defender for Cloud Integration
 MS_DEFENDER_ENABLED = os.environ.get("MS_DEFENDER_ENABLED", "true").lower() == "true"
 
