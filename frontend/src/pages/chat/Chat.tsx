@@ -799,7 +799,7 @@ const Chat = () => {
                 <img src={logo} className={styles.chatIcon} aria-hidden="true" />
                 <h1 className={styles.chatEmptyStateTitle}>{ui?.chat_title}</h1>
                 <h2 className={styles.chatEmptyStateSubtitle}>
-                  {ui?.chat_description}
+                  This chatbot does <strong>not</strong> have access to additional information about Ardent Management.
                   <br />
                   Click the button in the top right to change to Ardent knowledge base.
                 </h2>
