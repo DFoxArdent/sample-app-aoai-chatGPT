@@ -801,7 +801,7 @@ const Chat = () => {
                 <h2 className={styles.chatEmptyStateSubtitle}>
                   This chatbot does <strong>not</strong> have access to additional information about Ardent Management.
                   <br />
-                  Click the button in the top right to change to Ardent knowledge base.
+                  Click the button in the top right to switch to the Ardent knowledge base.
                 </h2>
               </Stack>
             ) : (
