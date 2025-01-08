@@ -1,20 +1,19 @@
-import { FormEvent, useContext, useEffect, useMemo, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { nord } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import { Checkbox, DefaultButton, Dialog, FontIcon, Stack, Text } from '@fluentui/react'
-import { useBoolean } from '@fluentui/react-hooks'
-import { ThumbDislike20Filled, ThumbLike20Filled } from '@fluentui/react-icons'
-import DOMPurify from 'dompurify'
-import remarkGfm from 'remark-gfm'
-import supersub from 'remark-supersub'
-import { AskResponse, Citation, Feedback, historyMessageFeedback } from '../../api'
-import { XSSAllowTags, XSSAllowAttributes } from '../../constants/sanatizeAllowables'
-import { AppStateContext } from '../../state/AppProvider'
+import { FormEvent, useContext, useEffect, useMemo, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { nord } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Checkbox, DefaultButton, Dialog, FontIcon, Stack, Text } from '@fluentui/react';
+import { useBoolean } from '@fluentui/react-hooks';
+import { ThumbDislike20Filled, ThumbLike20Filled } from '@fluentui/react-icons';
+import DOMPurify from 'dompurify';
+import remarkGfm from 'remark-gfm';
+import supersub from 'remark-supersub';
+import { AskResponse, Citation, Feedback, historyMessageFeedback } from '../../api';
+import { XSSAllowTags, XSSAllowAttributes } from '../../constants/sanatizeAllowables';
+import { AppStateContext } from '../../state/AppProvider';
+import { parseAnswer } from './AnswerParser';
 
-import { parseAnswer } from './AnswerParser'
-
-import styles from './Answer.module.css'
+import styles from './Answer.module.css';
 
 interface Props {
   answer: AskResponse
@@ -23,13 +22,13 @@ interface Props {
 }
 
 export const Answer = ({ answer, onCitationClicked, onExectResultClicked }: Props) => {
-  const initializeAnswerFeedback = (answer: AskResponse) => {
-    if (answer.message_id == undefined) return undefined
-    if (answer.feedback == undefined) return undefined
-    if (answer.feedback.split(',').length > 1) return Feedback.Negative
-    if (Object.values(Feedback).includes(answer.feedback)) return answer.feedback
-    return Feedback.Neutral
-  }
+    const initializeAnswerFeedback = (answer: AskResponse) => {
+        if (answer.message_id == undefined) return undefined;
+        if (answer.feedback == undefined) return undefined;
+        if (answer.feedback.split(',').length > 1) return Feedback.Negative;
+        if (Object.values(Feedback).includes(answer.feedback)) return answer.feedback;
+        return Feedback.Neutral;
+    };
 
   const [isRefAccordionOpen, { toggle: toggleIsRefAccordionOpen }] = useBoolean(false)
   const filePathTruncationLimit = 50
@@ -65,6 +64,20 @@ export const Answer = ({ answer, onCitationClicked, onExectResultClicked }: Prop
     }
     setFeedbackState(currentFeedbackState)
   }, [appStateContext?.state.feedbackState, feedbackState, answer.message_id])
+
+  const handleCopyClick = () => {
+    const contentToCopy = document.querySelector(`.${styles.answerText}`)?.textContent;
+    if (contentToCopy) {
+      navigator.clipboard
+        .writeText(contentToCopy)
+        .then(() => {
+          alert('Content copied to clipboard!');
+        })
+        .catch((err) => {
+          console.error('Failed to copy text: ', err);
+        });
+    }
+  };
 
   const createCitationFilepath = (citation: Citation, index: number, truncate: boolean = false) => {
     let citationFilename = ''
@@ -241,62 +254,77 @@ export const Answer = ({ answer, onCitationClicked, onExectResultClicked }: Prop
       )
     }
   }
-  return (
-    <>
-      <Stack className={styles.answerContainer} tabIndex={0}>
-        <Stack.Item>
-          <Stack horizontal grow>
-            <Stack.Item grow>
-              {parsedAnswer && <ReactMarkdown
-                linkTarget="_blank"
-                remarkPlugins={[remarkGfm, supersub]}
-                children={
-                  SANITIZE_ANSWER
-                    ? DOMPurify.sanitize(parsedAnswer?.markdownFormatText, { ALLOWED_TAGS: XSSAllowTags, ALLOWED_ATTR: XSSAllowAttributes })
-                    : parsedAnswer?.markdownFormatText
-                }
-                className={styles.answerText}
-                components={components}
-              />}
-            </Stack.Item>
-            <Stack.Item className={styles.answerHeader}>
-              {FEEDBACK_ENABLED && answer.message_id !== undefined && (
-                <Stack horizontal horizontalAlign="space-between">
-                  <ThumbLike20Filled
-                    aria-hidden="false"
-                    aria-label="Like this response"
-                    onClick={() => onLikeResponseClicked()}
-                    style={
-                      feedbackState === Feedback.Positive ||
-                        appStateContext?.state.feedbackState[answer.message_id] === Feedback.Positive
-                        ? { color: 'darkgreen', cursor: 'pointer' }
-                        : { color: 'slategray', cursor: 'pointer' }
+    return (
+      <>
+        <Stack className={styles.answerContainer} tabIndex={0}>
+          <Stack.Item>
+            <Stack horizontal grow>
+              <Stack.Item grow>
+                {parsedAnswer && (
+                  <ReactMarkdown
+                    linkTarget="_blank"
+                    remarkPlugins={[remarkGfm, supersub]}
+                    children={
+                      SANITIZE_ANSWER
+                        ? DOMPurify.sanitize(parsedAnswer?.markdownFormatText, {
+                            ALLOWED_TAGS: XSSAllowTags,
+                            ALLOWED_ATTR: XSSAllowAttributes,
+                          })
+                        : parsedAnswer?.markdownFormatText
                     }
+                    className={styles.answerText}
+                    components={components}
                   />
-                  <ThumbDislike20Filled
+                )}
+              </Stack.Item>
+              <Stack.Item grow={false} className={styles.answerHeader}>
+                <Stack horizontal horizontalAlign="end" tokens={{ childrenGap: 8 }}>
+                  <FontIcon
                     aria-hidden="false"
-                    aria-label="Dislike this response"
-                    onClick={() => onDislikeResponseClicked()}
-                    style={
-                      feedbackState !== Feedback.Positive &&
-                        feedbackState !== Feedback.Neutral &&
-                        feedbackState !== undefined
-                        ? { color: 'darkred', cursor: 'pointer' }
-                        : { color: 'slategray', cursor: 'pointer' }
-                    }
+                    aria-label="Copy to clipboard"
+                    iconName="ClipboardList"
+                    className={styles.copyIcon}
+                    onClick={handleCopyClick}
+                    style={{ fontSize: '16px', color: '#323130', cursor: 'pointer' }}
                   />
+                  {FEEDBACK_ENABLED && answer.message_id !== undefined && (
+                    <>
+                      <ThumbLike20Filled
+                        aria-hidden="false"
+                        aria-label="Like this response"
+                        onClick={() => onLikeResponseClicked()}
+                        style={
+                          feedbackState === Feedback.Positive ||
+                          appStateContext?.state.feedbackState[answer.message_id] === Feedback.Positive
+                            ? { color: 'darkgreen', cursor: 'pointer' }
+                            : { color: 'slategray', cursor: 'pointer' }
+                        }
+                      />
+                      <ThumbDislike20Filled
+                        aria-hidden="false"
+                        aria-label="Dislike this response"
+                        onClick={() => onDislikeResponseClicked()}
+                        style={
+                          feedbackState !== Feedback.Positive &&
+                          feedbackState !== Feedback.Neutral &&
+                          feedbackState !== undefined
+                            ? { color: 'darkred', cursor: 'pointer' }
+                            : { color: 'slategray', cursor: 'pointer' }
+                        }
+                      />
+                    </>
+                  )}
                 </Stack>
-              )}
-            </Stack.Item>
-          </Stack>
-        </Stack.Item>
-        {parsedAnswer?.generated_chart !== null && (
-          <Stack className={styles.answerContainer}>
-            <Stack.Item grow>
-              <img src={`data:image/png;base64, ${parsedAnswer?.generated_chart}`} />
-            </Stack.Item>
-          </Stack>
-        )}
+              </Stack.Item>
+            </Stack>
+          </Stack.Item>
+          {parsedAnswer?.generated_chart !== null && (
+            <Stack className={styles.answerContainer}>
+              <Stack.Item grow>
+                <img src={`data:image/png;base64, ${parsedAnswer?.generated_chart}`} alt="Generated chart" />
+              </Stack.Item>
+            </Stack>
+      )}
         <Stack horizontal className={styles.answerFooter}>
           {!!parsedAnswer?.citations.length && (
             <Stack.Item onKeyDown={e => (e.key === 'Enter' || e.key === ' ' ? toggleIsRefAccordionOpen() : null)}>
