@@ -139,6 +139,8 @@ export type FrontendSettings = {
   ui?: UI
   sanitize_answer?: boolean
   oyd_enabled?: boolean
+  polling_interval?: number
+  upload_max_filesize?: number
 }
 
 export enum Feedback {

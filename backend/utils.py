@@ -14,6 +14,11 @@ AZURE_SEARCH_PERMITTED_GROUPS_COLUMN = os.environ.get(
     "AZURE_SEARCH_PERMITTED_GROUPS_COLUMN"
 )
 
+# AZURE BLOB STORAGE
+DOCUPLOAD_RESTRICT_BY_CONVERSATIONID = os.environ.get("DOCUPLOAD_RESTRICT_BY_CONVERSATIONID")
+DOCUPLOAD_RESTRICT_BY_USERID = os.environ.get("DOCUPLOAD_RESTRICT_BY_USERID")
+DOCUPLOAD_GLOBAL_TAG = os.environ.get("DOCUPLOAD_GLOBAL_TAG")
+DOCUPLOAD_GLOBAL_TAG_VALUE = os.environ.get("DOCUPLOAD_GLOBAL_TAG_VALUE")
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
@@ -62,7 +67,6 @@ def fetchUserGroups(userToken, nextLink=None):
         logging.error(f"Exception in fetchUserGroups: {e}")
         return []
 
-
 def generateFilterString(userToken):
     # Get list of groups user is a member of
     userGroups = fetchUserGroups(userToken)
@@ -73,6 +77,24 @@ def generateFilterString(userToken):
 
     group_ids = ", ".join([obj["id"] for obj in userGroups])
     return f"{AZURE_SEARCH_PERMITTED_GROUPS_COLUMN}/any(g:search.in(g, '{group_ids}'))"
+
+
+def generateFilterStringForConversation(filterString, user_id, conversation_id):
+    filters = []
+    if filterString:
+        filters.append(filterString)
+    if DOCUPLOAD_RESTRICT_BY_CONVERSATIONID and conversation_id is not None:
+        filters.append(f"conversation_id eq '{conversation_id}'")
+    elif DOCUPLOAD_RESTRICT_BY_USERID and user_id is not None:
+        filters.append(f"user_id eq '{user_id}'")
+    # Skip global documents if no filters are applied
+    if DOCUPLOAD_GLOBAL_TAG and DOCUPLOAD_GLOBAL_TAG_VALUE and len(filters) > 0:
+        filterValue = DOCUPLOAD_GLOBAL_TAG_VALUE.lower()
+        if filterValue != "null":
+            filterValue = f"'{filterValue}'"
+        filters.append(f"{DOCUPLOAD_GLOBAL_TAG} eq {filterValue}")
+
+    return " or ".join(filters)
 
 
 def format_non_streaming_response(chatCompletion, history_metadata, apim_request_id):
@@ -166,7 +188,7 @@ def format_pf_non_streaming_response(
                 "content": chatCompletion[response_field_name] 
             })
         if citations_field_name in chatCompletion:
-            citation_content= {"citations": chatCompletion[citations_field_name]}
+            citation_content = {"citations": chatCompletion[citations_field_name]}
             messages.append({ 
                 "role": "tool",
                 "content": json.dumps(citation_content)
@@ -177,10 +199,10 @@ def format_pf_non_streaming_response(
             "model": "",
             "created": "",
             "object": "",
-            "history_metadata": history_metadata,
             "choices": [
                 {
                     "messages": messages,
+                    "history_metadata": history_metadata,
                 }
             ]
         }
@@ -213,4 +235,3 @@ def comma_separated_string_to_list(s: str) -> List[str]:
     Split comma-separated values into a list.
     '''
     return s.strip().replace(' ', '').split(',')
-

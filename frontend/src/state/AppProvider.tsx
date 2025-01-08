@@ -50,6 +50,7 @@ export type Action =
     payload: { answerId: string; feedback: Feedback.Positive | Feedback.Negative | Feedback.Neutral }
   }
   | { type: 'GET_FEEDBACK_STATE'; payload: string }
+  | { type: 'SET_ACTIVE_CONVERSATION_ID'; payload: string }
   | { type: 'SET_ANSWER_EXEC_RESULT'; payload: { answerId: string, exec_result: [] } }
 
 const initialState: AppState = {

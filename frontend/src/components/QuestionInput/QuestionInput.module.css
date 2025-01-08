@@ -1,4 +1,7 @@
 .questionInputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     height: 120px;
     position: absolute;
     left: 6.5%;
@@ -10,8 +13,24 @@
     border-radius: 8px;
 }
 
+.documentIconsContainer {
+    flex-grow: 1;
+    align-self: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin: 8px 0;
+}
+
+.documentIcon {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    top: -10px;
+}
+
 .questionInputTextArea {
-    width: 100%;
+    flex-grow: 1;
+    width: 90%;
     line-height: 40px;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -19,10 +38,29 @@
     margin-right: 12px;
 }
 
+
 .questionInputSendButtonContainer {
-    position: absolute;
-    right: 24px;
-    bottom: 20px;
+    margin-left: auto;
+}
+
+.questionInputActionsContainer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 12px 12px;
+    align-items: center;
+}
+
+.questionInputDocumentButtonContainer {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.questionUploadButtonContainer {
+    margin-right: 8px;
 }
 
 .questionInputSendButton {
@@ -30,7 +68,21 @@
     height: 23px;
 }
 
+.questionUploadButton {
+    width: 24px;
+    height: 23px;
+    vertical-align: middle;
+}
+
 .questionInputSendButtonDisabled {
+    /* opacity: 0.4; */
+    width: 24px;
+    height: 23px;
+    background: none;
+    color: #424242;
+}
+
+.questionUploadButtonDisabled {
     /* opacity: 0.4; */
     width: 24px;
     height: 23px;
@@ -53,6 +105,13 @@
     cursor: pointer;
     width: 27px;
     height: 30px;
+}
+
+.error {
+    color: red;
+    vertical-align: middle;
+    display: flex;
+    float: right;
 }
 
 @media (max-width: 480px) {

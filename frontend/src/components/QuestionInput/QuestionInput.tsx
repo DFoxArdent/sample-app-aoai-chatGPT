@@ -1,11 +1,16 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useCallback, forwardRef } from 'react';
 import { FontIcon, Stack, TextField } from '@fluentui/react';
-import { SendRegular } from '@fluentui/react-icons';
+import { SendRegular, AttachRegular } from '@fluentui/react-icons';
+import Uploady, { Destination, useItemStartListener, useItemFinishListener, useItemErrorListener } from '@rpldy/uploady';
+import UploadDropZone from '@rpldy/upload-drop-zone';
+import { asUploadButton } from '@rpldy/upload-button';
 
 import Send from '../../assets/Send.svg';
+import DocumentIcon from '../../assets/Document_Solutions_Duotone.svg';
+import Spinner from '../common/Spinner';
 
 import styles from './QuestionInput.module.css';
-import { ChatMessage } from '../../api';
+import { ChatMessage, indexDocument, indexStatus, frontendSettings, FrontendSettings } from '../../api';
 import { AppStateContext } from '../../state/AppProvider';
 import { resizeImage } from '../../utils/resizeImage';
 
@@ -15,14 +20,88 @@ interface Props {
     placeholder?: string;
     clearOnSend?: boolean;
     conversationId?: string;
+    onConversationIdUpdate?: (newConversationId: string, filename: string) => void;
+    onDocumentIndexing?: (isIndexing: boolean) => void;
+    onDocumentUploading?: (isUploading: boolean) => void;
 }
 
-export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, conversationId }: Props) => {
+interface UploadSpinnerProps {
+    documentUploaded: boolean;
+    setDocumentUploaded: React.Dispatch<React.SetStateAction<boolean>>;
+    onUploadStatusChange: (isUploading: boolean) => void;
+    onUploadSuccess: (conversationId: string, indexId: string, fileName: string) => void;
+}
+
+const UploadSpinner: React.FC<UploadSpinnerProps> = ({
+    documentUploaded,
+    setDocumentUploaded,
+    onUploadStatusChange,
+    onUploadSuccess
+}) => {
+    const [uploading, setUploading] = useState(false);
+    const [isSuccessfulUpload, setIsSuccessfulUpload] = useState(false);
+
+    useItemStartListener(() => {
+        onUploadStatusChange(true);
+        setUploading(true);
+        setIsSuccessfulUpload(false);
+        setDocumentUploaded(false);
+    });
+
+    useItemErrorListener(() => {
+        setIsSuccessfulUpload(false);
+        setUploading(false);
+    });
+
+    useItemFinishListener(item => {
+        if (item.uploadResponse && item.uploadStatus === 200) {
+            if (item.uploadResponse.data.conversation_id) {
+                onUploadStatusChange(false);
+
+                onUploadSuccess(
+                    item.uploadResponse.data.conversation_id,
+                    item.uploadResponse.data.index_id,
+                    item.uploadResponse.data.document_name
+                );
+            }
+        }
+        if (uploading) {
+            setUploading(false);
+        }
+        if (isSuccessfulUpload !== (item.uploadStatus === 200)) {
+            setIsSuccessfulUpload(item.uploadStatus === 200);
+        }
+    });
+
+    return (
+        <div className={styles.questionInputDocumentButtonContainer}>
+            {uploading && <Spinner isActive={uploading} />}
+            {(uploading || (isSuccessfulUpload && !documentUploaded)) && (
+                <img src={DocumentIcon} className={styles.documentIcon} alt="Uploaded document" />
+            )}
+        </div>
+    );
+};
+
+export const QuestionInput = ({
+    onSend,
+    disabled,
+    placeholder,
+    clearOnSend,
+    conversationId,
+    onConversationIdUpdate,
+    onDocumentIndexing,
+    onDocumentUploading
+}: Props) => {
     const [question, setQuestion] = useState<string>('');
     const [base64Image, setBase64Image] = useState<string | null>(null);
+    const [documentUploaded, setDocumentUploaded] = useState<boolean>(false);
+    const [indexId, setIndexId] = useState<string>('');
+    const [error, setError] = useState<string | null>(null);
 
     const appStateContext = useContext(AppStateContext);
     const OYD_ENABLED = appStateContext?.state.frontendSettings?.oyd_enabled || false;
+    const DOCUPLOAD_MAX_SIZE_MB = appStateContext?.state.frontendSettings?.upload_max_filesize;
 
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -60,8 +139,10 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, conv
 
     const removeImage = () => setBase64Image(null);
 
-    const sendQuestion = () => {
-        if (disabled || !question.trim()) return;
+    const sendQuestion = useCallback(async () => {
+        if (disabled || !question.trim()) {
+            return;
+        }
 
         const questionContent: ChatMessage['content'] = base64Image
             ? [
@@ -70,28 +151,90 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, conv
             ]
             : question.toString();
 
-        if (conversationId) {
-            onSend(questionContent, conversationId);
-        } else {
-            onSend(questionContent);
+        if (clearOnSend) {
+            setQuestion('');
+            setDocumentUploaded(true);
         }
 
+        if (indexId && onDocumentIndexing) {
+            onDocumentIndexing(true);
+
+            const result = await indexDocument(indexId);
+            const interval: number = ((await frontendSettings()) as FrontendSettings).polling_interval || 0;
+
+            for (let i = 0; i < 100; i++) {
+                await new Promise(f => setTimeout(f, interval * 1000));
+
+                const status = await indexStatus(result);
+
+                if (status === 'success' || status === 'transientFailure') break;
+            }
+
+            onDocumentIndexing(false);
+            setIndexId('');
+        }
+
+        conversationId ? onSend(questionContent, conversationId) : onSend(questionContent);
         setBase64Image(null);
-        if (clearOnSend) setQuestion('');
-    };
+        setError('');
+    }, [disabled, question, base64Image, clearOnSend, indexId, onDocumentIndexing, conversationId, onSend]);
 
-    const onEnterPress = (event: React.KeyboardEvent<Element>) => {
-        if (event.key === 'Enter' && !event.shiftKey && !(event.nativeEvent?.isComposing === true)) {
-            event.preventDefault();
-            sendQuestion();
-        }
-    };
+    const handleUploadSuccess = useCallback(
+        (newConversationId: string, uniqueId: string, filename: string) => {
+            if (onConversationIdUpdate && newConversationId !== null) {
+                onConversationIdUpdate(newConversationId, filename);
+                setIndexId(uniqueId);
+            }
+        },
+        [onConversationIdUpdate]
+    );
+
+    const handleUploadStatusChange = useCallback(
+        (isUploading: boolean) => {
+            if (onDocumentUploading) {
+                onDocumentUploading(isUploading);
+            }
+        },
+        [onDocumentUploading]
+    );
+
+    const onEnterPress = useCallback(
+        (ev: React.KeyboardEvent<Element>) => {
+            if (ev.key === 'Enter' && !ev.shiftKey && !(ev.nativeEvent?.isComposing === true)) {
+                ev.preventDefault();
+                sendQuestion();
+            }
+        },
+        [sendQuestion]
+    );
+
+    const fileSizeOk = useCallback(async (file: any) => {
+        setError('');
+        if (DOCUPLOAD_MAX_SIZE_MB && file.size > DOCUPLOAD_MAX_SIZE_MB * 1024 * 1024) {
+            setError('File size too large. Maximum file size is ' + DOCUPLOAD_MAX_SIZE_MB + 'MB.');
+            return false;
+        } else return true;
+    }, []);
 
     const onQuestionChange = (_ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setQuestion(newValue || '');
     };
 
     const sendQuestionDisabled = disabled || !question.trim();
+
+    const uploadDestination: Destination = {
+        url: '/document/upload'
+    };
+
+    const UploadWidget = asUploadButton(
+        forwardRef<HTMLDivElement>((props, ref) => (
+            <div {...props} className={styles.uploadButton}>
+                <div className={styles.questionUploadButtonContainer}>
+                    <AttachRegular className={styles.questionUploadButton} />
+                </div>
+            </div>
+        ))
+    );
 
     const ImagePreview = () => (
         <div
@@ -118,7 +261,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, conv
                 style={{
                     position: 'absolute',
                     top: '5px',
-                    right: '35px', /* Adjusted position to move the button further left */
+                    right: '35px',
                     backgroundColor: 'rgba(255, 0, 0, 0.8)',
                     color: 'white',
                     border: 'none',
@@ -139,52 +282,46 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, conv
     );
 
     return (
-        <Stack horizontal className={styles.questionInputContainer}>
-            <TextField
-                className={styles.questionInputTextArea}
-                placeholder={placeholder}
-                multiline
-                resizable={false}
-                borderless
-                value={question}
-                onChange={onQuestionChange}
-                onKeyDown={onEnterPress}
-                onPaste={onPaste}
-            />
-            {!OYD_ENABLED && (
-                <div className={styles.fileInputContainer}>
-                    <input
-                        type="file"
-                        id="fileInput"
-                        onChange={handleImageUpload}
-                        accept="image/*"
-                        className={styles.fileInput}
+        <Uploady destination={uploadDestination} fileFilter={fileSizeOk} params={{ conversationId: conversationId }}>
+            <UploadDropZone onDragOverClassName="drag-over" grouped maxGroupSize={3}>
+                <Stack horizontal className={styles.questionInputContainer}>
+                    <TextField
+                        className={styles.questionInputTextArea}
+                        placeholder={placeholder}
+                        multiline
+                        resizable={false}
+                        borderless
+                        value={question}
+                        onChange={onQuestionChange}
+                        onKeyDown={onEnterPress}
+                        onPaste={onPaste}
                     />
-                    <label htmlFor="fileInput" className={styles.fileLabel} aria-label="Upload Image">
-                        <FontIcon
-                            className={styles.fileIcon}
-                            iconName="PhotoCollection"
-                            aria-label="Upload Image Icon"
+
+                    <Stack horizontal className={styles.questionInputActionsContainer}>
+                        <UploadWidget />
+                        {error && <span className={styles.error}>{error}</span>}
+                        <UploadSpinner
+                            documentUploaded={documentUploaded}
+                            setDocumentUploaded={setDocumentUploaded}
+                            onUploadSuccess={handleUploadSuccess}
+                            onUploadStatusChange={handleUploadStatusChange}
                         />
-                    </label>
-                </div>
-            )}
-            {base64Image && <ImagePreview />}
-            <div
-                className={styles.questionInputSendButtonContainer}
-                role="button"
-                tabIndex={0}
-                aria-label="Ask Question Button"
-                onClick={sendQuestion}
-                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ' ? sendQuestion() : null)}
-            >
-                {sendQuestionDisabled ? (
-                    <SendRegular className={styles.questionInputSendButtonDisabled} />
-                ) : (
-                    <img src={Send} className={styles.questionInputSendButton} alt="Send Button" />
-                )}
-            </div>
-            <div className={styles.questionInputBottomBorder} />
-        </Stack>
+                        <div
+                            className={styles.questionInputSendButtonContainer}
+                            role="button"
+                            tabIndex={0}
+                            aria-label="Ask question button"
+                            onClick={sendQuestion}
+                            onKeyDown={e => (e.key === 'Enter' || e.key === ' ' ? sendQuestion() : null)}>
+                            {sendQuestionDisabled ? (
+                                <SendRegular className={styles.questionInputSendButtonDisabled} />
+                            ) : (
+                                <img src={Send} className={styles.questionInputSendButton} alt="Send Button" />
+                            )}
+                        </div>
+                    </Stack>
+                </Stack>
+            </UploadDropZone>
+        </Uploady>
     );
 };
