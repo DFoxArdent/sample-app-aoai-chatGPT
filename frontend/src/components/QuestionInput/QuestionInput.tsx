@@ -94,14 +94,46 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, conv
     const sendQuestionDisabled = disabled || !question.trim();
 
     const ImagePreview = () => (
-        <div className={styles.uploadPreviewContainer}>
-            <img className={styles.uploadedImage} src={base64Image || ''} alt="Uploaded Preview" />
+        <div
+            className={styles.uploadPreviewContainer}
+            style={{
+                position: 'relative',
+                maxWidth: 'calc(100% - 120px)',
+                marginRight: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
+        >
+            <img
+                className={styles.uploadedImage}
+                src={base64Image || ''}
+                alt="Uploaded Preview"
+                style={{ maxHeight: '100px', maxWidth: '100%', objectFit: 'contain' }}
+            />
             <button
                 className={styles.removeImageButton}
                 onClick={removeImage}
                 aria-label="Remove Uploaded Image"
+                style={{
+                    position: 'absolute',
+                    top: '5px',
+                    right: '35px', /* Adjusted position to move the button further left */
+                    backgroundColor: 'rgba(255, 0, 0, 0.8)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '24px',
+                    height: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    lineHeight: '1',
+                }}
             >
-                Remove
+                &times;
             </button>
         </div>
     );
