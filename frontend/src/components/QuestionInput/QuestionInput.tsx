@@ -38,6 +38,26 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, conv
         }
     };
 
+    const onPaste = async (event: React.ClipboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const clipboardItems = event.clipboardData.items;
+
+        for (let i = 0; i < clipboardItems.length; i++) {
+            const item = clipboardItems[i];
+            if (item.type.startsWith('image/')) {
+                const file = item.getAsFile();
+                if (file) {
+                    try {
+                        const resizedBase64 = await resizeImage(file, 800, 800);
+                        setBase64Image(resizedBase64);
+                    } catch (error) {
+                        console.error('Error during image paste:', error);
+                    }
+                }
+                break; // Exit loop once an image is found
+            }
+        }
+    };
+
     const removeImage = () => setBase64Image(null);
 
     const sendQuestion = () => {
@@ -97,6 +117,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, conv
                 value={question}
                 onChange={onQuestionChange}
                 onKeyDown={onEnterPress}
+                onPaste={onPaste}
             />
             {!OYD_ENABLED && (
                 <div className={styles.fileInputContainer}>
