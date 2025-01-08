@@ -285,10 +285,12 @@ export const Answer = ({ answer, onCitationClicked, onExectResultClicked }: Prop
                     iconName="ClipboardList"
                     className={styles.copyIcon}
                     onClick={handleCopyClick}
+                    title="Click here to copy the content"
                     style={{ fontSize: '16px', color: '#323130', cursor: 'pointer' }}
                   />
                   {FEEDBACK_ENABLED && answer.message_id !== undefined && (
                     <>
+                    <div title="Like this response">
                       <ThumbLike20Filled
                         aria-hidden="false"
                         aria-label="Like this response"
@@ -300,6 +302,8 @@ export const Answer = ({ answer, onCitationClicked, onExectResultClicked }: Prop
                             : { color: 'slategray', cursor: 'pointer' }
                         }
                       />
+                    </div>
+                    <div title="Dislike this response">
                       <ThumbDislike20Filled
                         aria-hidden="false"
                         aria-label="Dislike this response"
@@ -312,6 +316,7 @@ export const Answer = ({ answer, onCitationClicked, onExectResultClicked }: Prop
                             : { color: 'slategray', cursor: 'pointer' }
                         }
                       />
+                    </div>
                     </>
                   )}
                 </Stack>
